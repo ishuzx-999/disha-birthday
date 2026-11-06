@@ -49,17 +49,22 @@
     }
 
     function unlockGlobalAudio() {
-        if (S.unlockedAudio) return;
-        S.unlockedAudio = true;
         initAudioContext();
-        $('#audio-unlock-overlay').classList.add('hidden');
-
-        if (bgmAudio) {
-            bgmAudio.volume = 0.65;
-            bgmAudio.play().then(() => {
-                S.bgmPlaying = true;
-                $('#bgm-pill').classList.remove('paused');
-            }).catch(() => {});
+        if (bgmAudio && bgmAudio.paused && !S.voicePlaying) {
+            bgmAudio.volume = 0.75;
+            const playPromise = bgmAudio.play();
+            if (playPromise !== undefined) {
+                playPromise.then(() => {
+                    S.bgmPlaying = true;
+                    S.unlockedAudio = true;
+                    const overlay = $('#audio-unlock-overlay');
+                    if (overlay) overlay.classList.add('hidden');
+                    const pill = $('#bgm-pill');
+                    if (pill) pill.classList.remove('paused');
+                }).catch(err => {
+                    console.log('Autoplay deferred until user interaction:', err);
+                });
+            }
         }
     }
 
@@ -2141,8 +2146,28 @@
         initPromisesScene();
         initBirthdayScene();
 
-        document.body.addEventListener('click', unlockGlobalAudio, { once: true });
-        document.body.addEventListener('touchstart', unlockGlobalAudio, { once: true });
+        const unlockOverlay = $('#audio-unlock-overlay');
+        if (unlockOverlay) {
+            unlockOverlay.addEventListener('click', (e) => {
+                e.stopPropagation();
+                unlockGlobalAudio();
+            });
+            unlockOverlay.addEventListener('touchend', (e) => {
+                e.stopPropagation();
+                unlockGlobalAudio();
+            });
+        }
+
+        const triggerAudio = () => {
+            if (!S.bgmPlaying && !S.voicePlaying) {
+                unlockGlobalAudio();
+            }
+        };
+
+        window.addEventListener('click', triggerAudio, { passive: true });
+        window.addEventListener('touchstart', triggerAudio, { passive: true });
+        window.addEventListener('touchend', triggerAudio, { passive: true });
+        window.addEventListener('pointerdown', triggerAudio, { passive: true });
     });
 
 })();
