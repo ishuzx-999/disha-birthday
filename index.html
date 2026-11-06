@@ -1,0 +1,736 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>For Disha · A Museum Built Just For You</title>
+    <meta name="theme-color" content="#fcf5f0">
+
+    <!-- Romantic Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@600;700&family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,400;1,600&family=Great+Vibes&family=Playfair+Display:ital,wght@0,600;0,700;1,400;1,600&family=Quicksand:wght@400;500;600;700&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body class="theme-light">
+
+    <!-- Global Sound Unlock / Music Pill -->
+    <div id="audio-unlock-overlay" class="audio-unlock-pill">
+        <span class="unlock-icon">♪</span> TAP ANYWHERE FOR SOUND
+    </div>
+
+    <!-- Floating Background Music Player -->
+    <button id="bgm-pill" class="bgm-pill" aria-label="Toggle background music">
+        <span class="bgm-disc">
+            <span class="disc-core"></span>
+        </span>
+        <span class="bgm-title" id="bgm-title">Dil Diya Gallan</span>
+        <span class="bgm-eq"><i></i><i></i><i></i><i></i></span>
+    </button>
+
+    <!-- Global Confetti Canvas -->
+    <canvas id="confetti-canvas"></canvas>
+
+    <!-- Background Audio Tracks -->
+    <audio id="bgm-audio" preload="auto" loop playsinline>
+        <source src="song_1.m4a" type="audio/mp4">
+        <source src="song_1.webm" type="audio/webm">
+    </audio>
+    <audio id="voice-audio" preload="auto" playsinline>
+        <source src="media/voice_note.m4a" type="audio/mp4">
+        <source src="media/mera_voice.mp4" type="audio/mp4">
+    </audio>
+
+    <!-- ============================================================
+         SCENE 1 · CUPID BOW & ARROW ("PULL & LET GO")
+         Aiming from lower-left directly towards center heart!
+         ============================================================ -->
+    <section id="scene-bow" class="scene active">
+        <div class="bow-stage">
+            <p class="scene-kicker" id="bow-kicker">someone made this, just for you</p>
+
+            <!-- Center Target Heart -->
+            <div class="target-heart-wrap" id="target-heart-wrap">
+                <div class="target-heart-glow"></div>
+                <div class="target-heart" id="target-heart">
+                    <svg viewBox="0 0 100 90" class="heart-svg">
+                        <path
+                            d="M50,85 C20,60 0,40 0,25 C0,11 11,0 25,0 C35,0 44,6 50,15 C56,6 65,0 75,0 C89,0 100,11 100,25 C100,40 80,60 50,85 Z"
+                            fill="url(#heartGrad)" />
+                        <defs>
+                            <radialGradient id="heartGrad" cx="35%" cy="30%" r="70%">
+                                <stop offset="0%" stop-color="#ff8eb3" />
+                                <stop offset="55%" stop-color="#ff477e" />
+                                <stop offset="100%" stop-color="#d61f5b" />
+                            </radialGradient>
+                        </defs>
+                    </svg>
+                </div>
+            </div>
+
+            <!-- Arrow Hit Revelation Text -->
+            <div class="shatter-text-wrap hidden" id="shatter-text-wrap">
+                <h2 class="shatter-main-text">Still you. Always you.</h2>
+                <p class="shatter-author">— Sibu</p>
+                <p class="tap-continue-hint">tap anywhere to begin Balloon Archery 🏹</p>
+            </div>
+
+            <!-- Interactive Bow & Arrow Canvas in Lower Left with Aiming Line -->
+            <div class="bow-mechanic-wrap" id="bow-mechanic-wrap">
+                <canvas id="bow-canvas"></canvas>
+                <p class="pull-hint" id="pull-hint">DRAG TO AIM &amp; RELEASE</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- ============================================================
+         SCENE 1.2 · DISHA'S BALLOON ARCHERY LOVE HUNT
+         Pop 5 floating balloons to unlock hidden love shayari & notes!
+         ============================================================ -->
+    <section id="scene-balloon-game" class="scene">
+        <div class="balloon-stage" id="balloon-stage">
+            <div class="balloon-hud">
+                <span class="hud-pill">🏹 Shoot Sibu's Heart Balloons</span>
+                <span class="hud-counter" id="balloon-pop-counter">Popped: 0 / 5 🎈</span>
+            </div>
+            
+            <!-- Balloon Container where balloons float upward -->
+            <div class="balloon-sky" id="balloon-sky"></div>
+
+            <!-- Revealed Shayari Note Modal / Card -->
+            <div class="balloon-note-card hidden" id="balloon-note-card">
+                <div class="bn-emoji" id="bn-emoji">🎈</div>
+                <h3 class="bn-shayari-title" id="bn-shayari-title">From Sibu's Heart</h3>
+                <p class="bn-shayari-text" id="bn-shayari-text"></p>
+                <button class="bn-continue-btn" id="btn-bn-continue">Sweet! Keep Popping &rarr;</button>
+            </div>
+
+            <!-- All Balloons Completed Action -->
+            <div class="balloon-complete-banner hidden" id="balloon-complete-banner">
+                <h2>All Love Balloons Popped! ❤️</h2>
+                <p>Every single beat of Sibu's heart belongs to you, Disha.</p>
+                <button class="scene-next-btn gold-btn" id="btn-after-balloons">See What's Next &rarr;</button>
+            </div>
+        </div>
+    </section>
+
+    <!-- ============================================================
+         SCENE 1.5 · MAGENTA INTERLUDE CARD
+         "this one is for you... I Love You"
+         ============================================================ -->
+    <section id="scene-interlude" class="scene">
+        <div class="interlude-stage">
+            <div class="interlude-glow"></div>
+            <p class="interlude-sub">this one is for you...</p>
+            <h1 class="interlude-title">I Love You</h1>
+            <div class="interlude-line"></div>
+            <p class="interlude-desc">to the best thing that ever happened to me</p>
+            <p class="tap-continue-hint light">tap anywhere to continue</p>
+        </div>
+    </section>
+
+    <!-- ============================================================
+         SCENE 2 · REALISTIC ROMANTIC LOVE TREE
+         Sprouts naturally with realistic bark, branches, and lush
+         3D heart cherry-rose blossoms blooming into the canopy!
+         ============================================================ -->
+    <section id="scene-tree" class="scene">
+        <div class="tree-stage" id="tree-stage">
+            <div class="tree-visual-wrap" id="tree-visual-wrap">
+                <!-- High-res realistic romantic tree -->
+                <img src="media/realistic_romantic_tree.png" alt="Romantic Heart Tree" class="tree-realistic-img" id="tree-realistic-img">
+                <!-- Drifting petal leaves -->
+                <div class="tree-drifting-petals" id="tree-drifting-petals"></div>
+            </div>
+
+            <!-- Frosted Glass Card matching Instagram video -->
+            <div class="tree-card" id="tree-card">
+                <span class="tree-sub">made for you, by hand</span>
+                <h1 class="tree-title">I love you</h1>
+                <p class="tree-desc">and every ordinary day with you, Disha.</p>
+                <button class="scene-next-btn" id="btn-tree-next">For you, Disha &rarr;</button>
+            </div>
+
+            <p class="tree-tap-anywhere-hint" id="tree-tap-hint">tap anywhere to keep going</p>
+        </div>
+    </section>
+
+    <!-- ============================================================
+         SCENE 3 · GIFT BOX & MASSIVE REALISTIC ROSE EXPLOSION
+         Gift box opens, realistic roses rain and fill the screen,
+         then split down the center like curtains!
+         ============================================================ -->
+    <section id="scene-gift-roses" class="scene">
+        <div class="gift-box-stage" id="gift-box-stage">
+            <div class="gift-box-wrap" id="gift-box-wrap">
+                <div class="gift-box-lid" id="gift-box-lid">
+                    <div class="gift-ribbon-bow"></div>
+                </div>
+                <div class="gift-box-body" id="gift-box-body"></div>
+                <div class="gift-glow"></div>
+            </div>
+            <p class="gift-title">For you, Disha.</p>
+            <p class="gift-hint">(tap to open)</p>
+        </div>
+
+        <!-- Realistic Roses Waterfall / 100% Screen Blanket Layer -->
+        <div class="realistic-roses-curtain hidden" id="realistic-roses-curtain">
+            <div class="roses-full-blanket" id="roses-full-blanket"></div>
+        </div>
+    </section>
+
+    <!-- ============================================================
+         SCENE 4 · "FROM ME TO YOU" & POLAROID SCATTER
+         ============================================================ -->
+    <section id="scene-polaroids" class="scene">
+        <div class="polaroid-stage">
+            <div class="polaroid-header">
+                <h1 class="script-headline">For You, Disha.</h1>
+                <p class="script-subtitle">A few captured moments that make the world brighter.</p>
+                <div class="couple-art-wrap">
+                    <div class="couple-art">✨</div>
+                    <div class="couple-dots"><span></span><span class="active"></span><span></span></div>
+                </div>
+            </div>
+
+            <!-- Scatter of Real Mini Polaroids -->
+            <div class="polaroid-scatter-zone" id="polaroid-scatter-zone">
+                <!-- Dynamically generated floating polaroids of Disha -->
+            </div>
+
+            <div class="polaroid-action-wrap">
+                <button class="scene-next-btn gold-btn" id="btn-open-museum">Walk to the Museum Entrance &rarr;</button>
+            </div>
+        </div>
+    </section>
+
+    <!-- ============================================================
+         SCENE 5 · 3D ARCHED MUSEUM DOOR (KNOCK 3 TIMES)
+         ============================================================ -->
+    <section id="scene-door" class="scene">
+        <div class="door-stage">
+            <div class="door-kicker-wrap">
+                <span class="kicker-pill">EXHIBIT ENTRANCE</span>
+                <h2 class="door-headline">The Museum of Disha</h2>
+                <p class="door-sub">Tap the brass knocker 3 times to unlock the doors</p>
+            </div>
+
+            <div class="door-facade-3d">
+                <div class="arch-frame">
+                    <div class="door-leaf left-door" id="left-door">
+                        <div class="door-panel top"></div>
+                        <div class="door-panel bot"></div>
+                    </div>
+                    <div class="door-leaf right-door" id="right-door">
+                        <div class="door-panel top"></div>
+                        <div class="door-panel bot"></div>
+                    </div>
+
+                    <!-- Interactive Brass Knocker -->
+                    <div class="door-knocker-wrap" id="door-knocker">
+                        <div class="knocker-plate"></div>
+                        <div class="knocker-ring" id="knocker-ring"></div>
+                        <span class="knock-count-badge" id="knock-count-badge">0 / 3</span>
+                    </div>
+
+                    <!-- Interior Glow revealed upon opening -->
+                    <div class="door-interior-glow" id="door-interior-glow">
+                        <div class="interior-welcome">
+                            <span class="welcome-label">WELCOME</span>
+                            <h3>Come in, Disha.</h3>
+                            <p>Every room holds a memory.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ============================================================
+         ROOM I · THE GALLERY: SCRATCH-OFF EXHIBIT
+         ============================================================ -->
+    <section id="scene-room-scratch" class="scene">
+        <div class="room-stage">
+            <div class="room-header">
+                <span class="room-number">ROOM I · THE GALLERY</span>
+                <h2 class="room-title">Scratch to Reveal</h2>
+                <p class="room-subtitle">Use your finger or cursor to scratch away the gold foil</p>
+            </div>
+
+            <div class="scratch-card-container">
+                <div class="scratch-card-frame">
+                    <div class="scratch-underlayer" id="scratch-underlayer">
+                        <img id="scratch-photo" src="media/photos/p001.jpg" alt="Secret Memory">
+                        <div class="scratch-caption" id="scratch-caption">
+                            <h3>The Smile That Stopped Time</h3>
+                            <p>The moment I fell in love with your laugh.</p>
+                        </div>
+                    </div>
+                    <canvas id="scratch-canvas" width="380" height="380"></canvas>
+                </div>
+                <div class="scratch-progress-wrap">
+                    <div class="scratch-progress-bar" id="scratch-bar"></div>
+                    <span class="scratch-pct" id="scratch-pct">Scratch to reveal</span>
+                </div>
+            </div>
+
+            <div class="room-bottom-nav">
+                <button class="scene-next-btn gold-btn" id="btn-next-room-1">Next: 3x3 Photo Puzzle &rarr;</button>
+                <div class="room-indicator"><span>1</span> of 7</div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ============================================================
+         ROOM II · THE ATELIER: 3x3 DRAG & DROP / TAP-TO-SWAP PUZZLE
+         ============================================================ -->
+    <section id="scene-room-puzzle" class="scene">
+        <div class="room-stage">
+            <div class="room-header">
+                <span class="room-number">ROOM II · THE ATELIER</span>
+                <h2 class="room-title">Piece Us Together</h2>
+                <p class="room-subtitle">Drag &amp; drop any tile to swap, or tap tile A then tile B</p>
+            </div>
+
+            <div class="puzzle-outer-wrap">
+                <div class="puzzle-grid" id="puzzle-grid">
+                    <!-- 9 3x3 tiles dynamically injected with drag and swap -->
+                </div>
+                
+                <div class="puzzle-solved-banner hidden" id="puzzle-solved-banner">
+                    ✨ PUZZLE RESTORED! PERFECT MATCH! ❤️
+                </div>
+
+                <div class="puzzle-actions">
+                    <button class="puzzle-btn" id="btn-puzzle-peek">👁️ Peek Preview</button>
+                    <button class="puzzle-btn" id="btn-puzzle-numbers">🔢 Toggle Numbers</button>
+                    <button class="puzzle-btn primary-btn" id="btn-puzzle-solve">✨ Auto Solve</button>
+                </div>
+            </div>
+
+            <div class="room-bottom-nav">
+                <button class="scene-next-btn gold-btn" id="btn-next-room-2">Next: The Love Lab &rarr;</button>
+                <div class="room-indicator"><span>2</span> of 7</div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ============================================================
+         ROOM III (CUTE TASK 1) · THE LOVE LAB & 1000% CHARGER
+         ============================================================ -->
+    <section id="scene-room-love-meter" class="scene">
+        <div class="room-stage">
+            <div class="room-header">
+                <span class="room-number">ROOM III · THE LOVE LAB</span>
+                <h2 class="room-title">Disha's Love Battery</h2>
+                <p class="room-subtitle">Tap the giant heart furiously to charge Sibu's love to 1000%!</p>
+            </div>
+
+            <div class="love-meter-wrap">
+                <!-- Battery Tube -->
+                <div class="battery-casing">
+                    <div class="battery-terminal"></div>
+                    <div class="battery-glass">
+                        <div class="battery-liquid" id="battery-liquid"></div>
+                        <div class="battery-bubbles" id="battery-bubbles"></div>
+                        <div class="battery-pct-label" id="battery-pct-label">0%</div>
+                    </div>
+                </div>
+
+                <!-- Giant Tap Heart -->
+                <div class="tap-heart-trigger" id="tap-heart-trigger">
+                    <div class="tap-heart-pulse"></div>
+                    <div class="tap-heart-icon">💖</div>
+                    <span class="tap-here-tag">TAP ME FAST!</span>
+                </div>
+
+                <!-- Live Funny Reaction Banner -->
+                <div class="love-reaction-box" id="love-reaction-box">
+                    "Tap to start charging your boyfriend's devotion..."
+                </div>
+            </div>
+
+            <div class="room-bottom-nav">
+                <button class="scene-next-btn gold-btn" id="btn-next-room-love">Next: Date Night Wheel &rarr;</button>
+                <div class="room-indicator"><span>3</span> of 7</div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ============================================================
+         ROOM IV (CUTE TASK 2) · BIRTHDAY PRIVILEGE WHEEL
+         ============================================================ -->
+    <section id="scene-room-wheel" class="scene">
+        <div class="room-stage">
+            <div class="room-header">
+                <span class="room-number">ROOM IV · THE BIRTHDAY WHEEL</span>
+                <h2 class="room-title">Disha's Birthday Privileges</h2>
+                <p class="room-subtitle">Spin to claim a special treat Sibu must fulfill today! 😉</p>
+            </div>
+
+            <div class="wheel-stage-wrap">
+                <div class="roulette-wheel-container">
+                    <div class="wheel-pointer-pin">▼</div>
+                    <canvas id="wheel-canvas" width="300" height="300"></canvas>
+                    <div class="wheel-center-cap" id="btn-spin-wheel">
+                        <span>SPIN!</span>
+                    </div>
+                </div>
+
+                <div class="wheel-result-banner" id="wheel-result-banner">
+                    Tap SPIN to let destiny claim your royal boyfriend perk!
+                </div>
+            </div>
+
+            <div class="room-bottom-nav">
+                <button class="scene-next-btn gold-btn" id="btn-next-room-wheel">Next: Secret Vault &rarr;</button>
+                <div class="room-indicator"><span>4</span> of 9</div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ============================================================
+         ROOM V (NEW IMPRESSIVE TASK 1) · SECRET COMPLIMENT SCANNER
+         Disha presses & holds heart scanner to reveal what Sibu adores
+         ============================================================ -->
+    <section id="scene-room-compliments" class="scene">
+        <div class="room-stage">
+            <div class="room-header">
+                <span class="room-number">ROOM V · THE SECRET VAULT</span>
+                <h2 class="room-title">What Sibu Secretly Adores</h2>
+                <p class="room-subtitle">Press &amp; hold your heart sensor to unlock private notes about you</p>
+            </div>
+
+            <div class="scanner-wrap">
+                <div class="fingerprint-sensor" id="fingerprint-sensor">
+                    <div class="sensor-glow"></div>
+                    <div class="sensor-icon">💖</div>
+                    <span class="sensor-label">PRESS &amp; HOLD</span>
+                </div>
+
+                <div class="compliment-reveal-box" id="compliment-reveal-box">
+                    <p class="cr-placeholder">"Hold the heart scanner to decode Sibu's mind..."</p>
+                </div>
+
+                <div class="compliments-progress" id="compliments-progress">
+                    <span class="dot active"></span><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="dot"></span>
+                </div>
+            </div>
+
+            <div class="room-bottom-nav">
+                <button class="scene-next-btn gold-btn" id="btn-next-room-compliments">Next: Stargazing &rarr;</button>
+                <div class="room-indicator"><span>5</span> of 9</div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ============================================================
+         ROOM VI (NEW IMPRESSIVE TASK 2) · STARGAZING CONSTELLATION
+         Connect the glowing stars in the cosmos to draw D ❤️ S!
+         ============================================================ -->
+    <section id="scene-room-stars" class="scene">
+        <div class="room-stage">
+            <div class="room-header">
+                <span class="room-number">ROOM VI · THE NIGHT SKY</span>
+                <h2 class="room-title">Written in the Stars</h2>
+                <p class="room-subtitle">Tap the glowing stars in sequence to ignite our constellation</p>
+            </div>
+
+            <div class="constellation-sky" id="constellation-sky">
+                <canvas id="stars-canvas" width="340" height="340"></canvas>
+                <div class="constellation-hint" id="constellation-hint">Tap star 1 to begin connecting our constellation...</div>
+            </div>
+
+            <div class="room-bottom-nav">
+                <button class="scene-next-btn gold-btn" id="btn-next-room-stars">Next: Boyfriend Quiz &rarr;</button>
+                <div class="room-indicator"><span>6</span> of 9</div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ============================================================
+         ROOM VII (CUTE TASK 3) · "BOYFRIEND QUALITY CHECK" QUIZ
+         ============================================================ -->
+    <section id="scene-room-quiz" class="scene">
+        <div class="room-stage">
+            <div class="room-header">
+                <span class="room-number">ROOM VII · THE POP QUIZ</span>
+                <h2 class="room-title">The Boyfriend Quality Check</h2>
+                <p class="room-subtitle">Answer honestly! Let's see if your boyfriend passed inspection.</p>
+            </div>
+
+            <div class="quiz-card-wrap" id="quiz-card-wrap">
+                <div class="quiz-question-card" id="quiz-card">
+                    <span class="quiz-step" id="quiz-step">QUESTION 1 OF 3</span>
+                    <h3 class="quiz-q-title" id="quiz-q-title">When you get hangry, what must your boyfriend do?</h3>
+                    <div class="quiz-options-list" id="quiz-options-list">
+                        <!-- Options injected dynamically -->
+                    </div>
+                    <div class="quiz-feedback-box hidden" id="quiz-feedback-box"></div>
+                </div>
+            </div>
+
+            <div class="room-bottom-nav">
+                <button class="scene-next-btn gold-btn" id="btn-next-room-quiz">Next: Sealed Vault &rarr;</button>
+                <div class="room-indicator"><span>7</span> of 9</div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ============================================================
+         ROOM VI · EXACT LOVE LETTER & SIBU'S VOICE NOTE
+         Directly open card matching frames f_48 & f_50!
+         Voice Note pill directly below, playing with 100% clarity!
+         ============================================================ -->
+    <section id="scene-room-voice" class="scene">
+        <div class="room-stage">
+            <div class="exact-letter-container">
+                <!-- White Parchment Love Letter Card -->
+                <div class="exact-letter-card">
+                    <p class="el-para">
+                        I don't think I tell you this enough, but meeting you has been one of the best things that's ever happened to me.
+                    </p>
+                    <p class="el-para">
+                        Thank you for being patient with me, making me laugh, listening to my endless talks, and loving me even on the days I'm difficult.
+                    </p>
+                    <p class="el-para">
+                        No matter how busy life gets, I hope you always remember one thing... you'll always be my favorite person. 💛
+                    </p>
+                    <p class="el-para">
+                        I love you more than words can ever explain. 💗
+                    </p>
+                    <p class="el-sign">— Sibu</p>
+                </div>
+
+                <!-- Exact Voice Note Pill (Hear Sibu say it) -->
+                <div class="exact-voice-pill" id="exact-voice-pill">
+                    <div class="ev-avatar">🎙️</div>
+                    <div class="ev-center">
+                        <span class="ev-title">Hear Sibu say it</span>
+                        <div class="ev-wave" id="ev-wave">
+                            <i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i>
+                            <i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i>
+                        </div>
+                    </div>
+                    <div class="ev-right">
+                        <span class="ev-time" id="ev-time">0:38</span>
+                        <button class="ev-play-btn" id="btn-ev-play" aria-label="Play Voice Note">▶</button>
+                    </div>
+                </div>
+
+                <!-- Cute Emoji Below Letter -->
+                <div class="letter-bottom-emoji">🥰</div>
+            </div>
+
+            <div class="room-bottom-nav">
+                <button class="scene-next-btn gold-btn" id="btn-next-room-3">One last room &rarr;</button>
+                <div class="room-indicator"><span>6</span> of 7</div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ============================================================
+         ROOM VII · OUR PROMISES & RUBBER STAMP
+         ============================================================ -->
+    <section id="scene-room-promises" class="scene">
+        <div class="room-stage">
+            <div class="room-header">
+                <span class="room-number">ROOM VII · OUR PROMISES</span>
+                <h2 class="room-title">Tick the ones you'll hold us to.</h2>
+            </div>
+
+            <div class="promises-scroll-wrap">
+                <div class="promises-paper" id="promises-paper">
+                    <div class="promises-seal-stamp hidden" id="promises-seal-stamp">
+                        <span>SEALED</span>
+                        <small>WITH LOVE</small>
+                    </div>
+
+                    <h3 class="promises-heading">Our Promises</h3>
+                    <p class="promises-sub">BETWEEN SIBU AND DISHA</p>
+
+                    <div class="promises-list">
+                        <label class="p-check-item">
+                            <input type="checkbox" checked>
+                            <span class="p-box">✓</span>
+                            <span class="p-text">1. Never go to bed angry.</span>
+                        </label>
+                        <label class="p-check-item">
+                            <input type="checkbox" checked>
+                            <span class="p-box">✓</span>
+                            <span class="p-text">2. Say the hard thing gently.</span>
+                        </label>
+                        <label class="p-check-item">
+                            <input type="checkbox" checked>
+                            <span class="p-box">✓</span>
+                            <span class="p-text">3. Always share the last bite.</span>
+                        </label>
+                        <label class="p-check-item">
+                            <input type="checkbox" checked>
+                            <span class="p-box">✓</span>
+                            <span class="p-text">4. Choose you again, every ordinary morning.</span>
+                        </label>
+                        <label class="p-check-item">
+                            <input type="checkbox" checked>
+                            <span class="p-box">✓</span>
+                            <span class="p-text">5. Pick you first. Every single time.</span>
+                        </label>
+                        <label class="p-check-item">
+                            <input type="checkbox" checked>
+                            <span class="p-box">✓</span>
+                            <span class="p-text">6. Love you more with every birthday we celebrate.</span>
+                        </label>
+                    </div>
+
+                    <button class="make-official-btn" id="btn-make-official">Make it official &rarr;</button>
+                </div>
+            </div>
+
+            <div class="rubber-stamper" id="rubber-stamper">
+                <div class="stamper-handle"></div>
+                <div class="stamper-base"></div>
+            </div>
+
+            <div class="room-bottom-nav">
+                <button class="scene-next-btn gold-btn hidden" id="btn-to-birthday">Celebrate Your 18th &rarr;</button>
+                <div class="room-indicator"><span>7</span> of 7</div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ============================================================
+         SCENE 10 · GRAND DEDICATED BIRTHDAY CAKE CUTTING CEREMONY
+         Pure gourmet tiered cake with flickering candles & glowing diya,
+         knife on the side ready to cut! No name initially; once cut,
+         candles extinguish and Grand Birthday Wishing reveals!
+         ============================================================ -->
+    <section id="scene-birthday" class="scene theme-celebration">
+        <div class="celebration-stage">
+            <!-- Initial Instruction Header before cut -->
+            <div class="cake-pre-cut-header" id="cake-pre-cut-header">
+                <p class="celeb-eyebrow">✦ SPECIAL MIDNIGHT CELEBRATION ✦</p>
+                <h2 class="celeb-subtitle">Make a wish before you blow the candles &amp; diya</h2>
+            </div>
+
+            <!-- Grand Birthday Wishing Reveal (Hidden until cut!) -->
+            <div class="cake-wishing-reveal hidden" id="cake-wishing-reveal">
+                <p class="celeb-eyebrow">✦ 09 · 11 · 2026 ✦</p>
+                <h1 class="celeb-title">HAPPY 18<sup>TH</sup> BIRTHDAY</h1>
+                <h2 class="celeb-name">DISHA 👑</h2>
+                <div class="celeb-wish-text">
+                    <p class="shayari-line">"Khuda kare har khushi tere kadam choome,</p>
+                    <p class="shayari-line">Har subah teri aankhon mein nayi chamak le aaye...</p>
+                    <p class="shayari-line">Ye 18th saal teri zindagi ka sabse khoobsurat daur bane,</p>
+                    <p class="shayari-line">Aur teri pyari si muskaan hamesha aisi hi salamat rahe."</p>
+                    <span class="shayari-from">— Sibu ✨</span>
+                </div>
+            </div>
+
+            <!-- Real Gourmet Birthday Cake with Interactive Knife -->
+            <div class="cake-ceremony-stage" id="cake-ceremony-stage">
+                <div class="cake-stand-realistic-wrap" id="cake-stand-realistic-wrap">
+                    <img src="media/realistic_luxury_cake.png" alt="Realistic Luxury Birthday Cake" class="cake-realistic-img" id="cake-realistic-img">
+                    
+                    <!-- Dynamic Glowing Candle & Diya Flames over the cake -->
+                    <div class="cake-flames-overlay" id="cake-flames-overlay">
+                        <span class="candle-flame flame-left"></span>
+                        <span class="diya-glow-flame"></span>
+                        <span class="candle-flame flame-right"></span>
+                    </div>
+
+                    <!-- Cut Cake Slice that pops out! -->
+                    <div class="cake-cut-slice hidden" id="cake-cut-slice">
+                        <div class="slice-body">🍰</div>
+                        <span class="slice-tag">Make a Wish, Birthday Queen! 🎂✨</span>
+                    </div>
+                </div>
+
+                <!-- Realistic Cake Knife positioned at the side to tap & cut! -->
+                <div class="interactive-cake-knife" id="cake-knife" title="Tap to cut the cake!">
+                    <img src="media/realistic_knife.png" alt="Cake Knife" class="knife-realistic-img">
+                    <span class="knife-prompt">🔪 TAP TO CUT</span>
+                </div>
+
+                <p class="cake-instruction-hint" id="cake-instruction-hint">
+                    Tap the knife to cut your 18th Birthday Cake! 🎂
+                </p>
+            </div>
+
+            <div class="celeb-actions">
+                <button class="celeb-btn primary-glow hidden" id="btn-play-slideshow">🎬 Watch Memories Movie (140+ Photos)</button>
+                <button class="celeb-btn secondary" id="btn-restart-museum">↻ Visit Museum Again</button>
+            </div>
+
+            <div class="celeb-secret-video hidden" id="celeb-secret-video-wrap">
+                <p class="video-label">Our Special Moments</p>
+                <video id="special-video" controls playsinline preload="metadata">
+                    <source src="media/disha_video.mp4" type="video/mp4">
+                </video>
+            </div>
+        </div>
+    </section>
+
+    <!-- ============================================================
+         CAPCUT-STYLE PHOTO SLIDESHOW THEATER MODAL (10 TRANSITIONS)
+         ============================================================ -->
+    <div class="slideshow-modal hidden" id="slideshow-modal">
+        <button class="close-modal-btn" id="btn-close-slideshow" aria-label="Close Movie">&times;</button>
+        
+        <!-- Lightning Canvas Overlay -->
+        <canvas id="lightning-canvas"></canvas>
+
+        <!-- Thunder Screen Flash Overlay -->
+        <div class="thunder-flash" id="thunder-flash"></div>
+
+        <!-- Light Leak / Film Reel Burn Overlay -->
+        <div class="film-burn-flash" id="film-burn-flash"></div>
+
+        <!-- Heart Shutter Iris Overlay -->
+        <div class="heart-iris-overlay" id="heart-iris-overlay"></div>
+
+        <!-- Glitch RGB Aberration Overlay -->
+        <div class="glitch-overlay" id="glitch-overlay"></div>
+
+        <!-- Kaleidoscope Crystal Overlay -->
+        <div class="prism-overlay" id="prism-overlay"></div>
+
+        <!-- Timeline Progress Bar -->
+        <div class="slideshow-progress-track">
+            <div class="slideshow-progress-fill" id="ss-progress-fill"></div>
+        </div>
+
+        <div class="slideshow-stage" id="ss-stage">
+            <!-- Outgoing Photo Halves for 3D Tear Transition -->
+            <div class="split-tear-container" id="split-tear-container">
+                <div class="split-half split-left" id="split-left"></div>
+                <div class="split-half split-right" id="split-right"></div>
+            </div>
+
+            <!-- 3D Cube Flip Transition Container -->
+            <div class="cube-container hidden" id="cube-container">
+                <div class="cube-face cube-front" id="cube-front"></div>
+                <div class="cube-face cube-back" id="cube-back"></div>
+            </div>
+
+            <!-- Active Main Photo Container with Ken Burns motion -->
+            <div class="main-photo-wrap" id="main-photo-wrap">
+                <img id="slideshow-img" src="media/photos/p001.jpg" alt="Disha's Memory">
+            </div>
+
+            <div class="slideshow-caption" id="slideshow-caption">Memory 1 of 140</div>
+        </div>
+
+        <!-- Theater Controls -->
+        <div class="slideshow-controls">
+            <button class="ss-btn" id="btn-ss-prev" title="Previous Photo">&lsaquo; Prev</button>
+            <button class="ss-btn play-pause-btn" id="btn-ss-toggle">⏸ Pause</button>
+            <span class="ss-counter" id="ss-counter">1 / 140</span>
+            <button class="ss-btn" id="btn-ss-next" title="Next Photo">Next &rsaquo;</button>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="photos.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>
